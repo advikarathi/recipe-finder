@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eat Your Way Around the World</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="hero">
+        <div>
+            <p class="eyebrow">TheMealDB travel recipe finder</p>
+            <h1>Eat Your Way Around the World</h1>
+            <p class="intro">
+                Pick a cuisine, browse real recipes from that place, and save the meals you want to revisit.
+            </p>
+        </div>
+    </header>
+
+    <main>
+        <section class="search-panel" aria-label="Recipe search">
+            <form id="search-form" class="search-form">
+                <label for="recipe-search">Search recipes by name</label>
+                <div class="search-row">
+                    <input id="recipe-search" type="search" placeholder="Try chicken, pasta, curry, cake..." />
+                    <button type="submit">Search</button>
+                    <button id="clear-search" class="secondary hidden" type="button">Clear</button>
+                </div>
+            </form>
+            <div class="quick-searches" aria-label="Popular recipe searches">
+                <button type="button" data-search="chicken">Chicken</button>
+                <button type="button" data-search="pasta">Pasta</button>
+                <button type="button" data-search="curry">Curry</button>
+                <button type="button" data-search="rice">Rice</button>
+                <button type="button" data-search="soup">Soup</button>
+                <button type="button" data-search="cake">Cake</button>
+            </div>
+        </section>
+
+        <section class="toolbar" aria-label="Recipe filters">
+            <label for="area-select">Choose a country or cuisine</label>
+            <div class="control-row">
+                <select id="area-select">
+            <option value="">Loading cuisines...</option>
+          </select>
+                <button id="show-favorites" type="button">Show favorites</button>
+                <label class="toggle-control" for="vegetarian-toggle">
+                    <input id="vegetarian-toggle" type="checkbox" />
+                    Vegetarian only
+                </label>
+                <button id="theme-toggle" class="secondary" type="button">Dark mode</button>
+            </div>
+        </section>
+
+        <p id="status" role="status"></p>
+
+        <section id="stats-panel" class="stats-panel" aria-label="Recipe result summary">
+            <div>
+                <span id="stat-total">0</span>
+                <p>matching recipes</p>
+            </div>
+            <div>
+                <span id="stat-shown">0</span>
+                <p>shown now</p>
+            </div>
+            <div>
+                <span id="stat-favorites">0</span>
+                <p>favorites saved</p>
+            </div>
+            <div class="progress-stat">
+                <p id="progress-label">Showing 0 of 0</p>
+                <div class="progress-track" aria-hidden="true">
+                    <span id="progress-fill"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-header">
+            <div>
+                <p class="eyebrow" id="view-label">Browse</p>
+                <h2 id="results-title">Recipes</h2>
+            </div>
+            <button id="back-to-browse" class="secondary hidden" type="button">
+          Back to cuisines
+        </button>
+        </section>
+
+        <section id="meal-list" class="meal-grid" aria-live="polite"></section>
+        <div class="load-more-wrap">
+            <button id="load-more" class="secondary hidden" type="button">Load more recipes</button>
+        </div>
+    </main>
+
+    <dialog id="recipe-dialog">
+        <article class="recipe-detail">
+            <button id="close-dialog" class="icon-button" type="button" aria-label="Close recipe">
+          x
+        </button>
+            <img id="detail-image" src="" alt="" />
+            <div class="detail-body">
+                <p class="eyebrow" id="detail-area"></p>
+                <h2 id="detail-title"></h2>
+                <button id="detail-favorite" type="button"></button>
+                <dl id="detail-facts" class="detail-facts"></dl>
+                <h3>Ingredients</h3>
+                <ul id="detail-ingredients"></ul>
+                <h3>Instructions</h3>
+                <p id="detail-instructions"></p>
+                <a id="detail-video" class="video-link" href="#" target="_blank" rel="noreferrer">
+            Watch recipe video
+          </a>
+            </div>
+        </article>
+    </dialog>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
