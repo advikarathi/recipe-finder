@@ -38,6 +38,7 @@ const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("recipe-search");
 const clearSearchButton = document.getElementById("clear-search");
 const quickSearches = document.querySelector(".quick-searches");
+const surpriseButton = document.getElementById("surprise-me");
 const favoritesButton = document.getElementById("show-favorites");
 const vegetarianToggle = document.getElementById("vegetarian-toggle");
 const themeToggle = document.getElementById("theme-toggle");
@@ -97,6 +98,10 @@ function saveFavorites() {
 
 function setStatus(message) {
   statusEl.textContent = message;
+  statusEl.classList.toggle(
+    "loading",
+    /^(Loading|Searching|Checking|Saving|Finding)/.test(message)
+  );
 }
 
 function updateFavoritesButton() {
@@ -156,10 +161,22 @@ async function fetchJson(url) {
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new Error(
+      response.status === 429
+        ? "The API is rate limiting requests."
+        : `Request failed with status ${response.status}`
+    );
   }
 
   return response.json();
+}
+
+function getApiErrorMessage(action, error) {
+  if (error.message.includes("rate limiting")) {
+    return "The API is rate limiting requests. Wait a minute and try again.";
+  }
+
+  return `Something went wrong ${action}.`;
 }
 
 async function lookupMealDetails(id) {
@@ -231,7 +248,7 @@ async function loadMealsByArea(area) {
     console.error(error);
     currentMeals = [];
     resetResultsDisplay();
-    setStatus("Something went wrong loading recipes for this cuisine.");
+    setStatus(getApiErrorMessage("loading recipes for this cuisine", error));
   }
 }
 
@@ -261,7 +278,41 @@ async function searchMealsByName(query) {
     console.error(error);
     currentMeals = [];
     resetResultsDisplay();
-    setStatus("Something went wrong searching for recipes.");
+    setStatus(getApiErrorMessage("searching for recipes", error));
+  }
+}
+
+async function loadRandomMeal() {
+  currentView = "surprise";
+  lastSearchQuery = "";
+  searchInput.value = "";
+  clearSearchButton.classList.add("hidden");
+  backButton.classList.remove("hidden");
+  viewLabel.textContent = "Surprise";
+  resultsTitle.textContent = vegetarianOnly ? "Vegetarian surprise recipe" : "Surprise recipe";
+  setStatus("Finding a surprise recipe...");
+
+  try {
+    let randomMeal = null;
+
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const data = await fetchJson(`${API_BASE}/random.php`);
+      const meal = data.meals ? data.meals[0] : null;
+
+      if (meal && (!vegetarianOnly || meal.strCategory === "Vegetarian")) {
+        randomMeal = meal;
+        break;
+      }
+    }
+
+    currentMeals = randomMeal ? [randomMeal] : [];
+    setStatus(randomMeal ? "" : "Could not find a vegetarian surprise recipe. Try again or turn off the vegetarian filter.");
+    resetResultsDisplay();
+  } catch (error) {
+    console.error(error);
+    currentMeals = [];
+    resetResultsDisplay();
+    setStatus(getApiErrorMessage("finding a surprise recipe", error));
   }
 }
 
@@ -271,7 +322,7 @@ function renderMeals(meals) {
   if (!meals.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent =
+    const message =
       currentView === "favorites"
         ? vegetarianOnly
           ? "No vegetarian favorites are saved yet. Save a vegetarian recipe to add one here."
@@ -283,6 +334,16 @@ function renderMeals(meals) {
         : vegetarianOnly
           ? "No vegetarian meals found for this cuisine. Try another cuisine or turn off the vegetarian filter."
           : "No meals found for this cuisine yet. Try another option from the dropdown.";
+    const suggestions = vegetarianOnly
+      ? ["pasta", "rice", "soup", "cake"]
+      : ["chicken", "pasta", "rice", "cake"];
+
+    empty.innerHTML = `
+      <p>${escapeHtml(message)}</p>
+      <div class="empty-actions">
+        ${suggestions.map((term) => `<button type="button" data-suggestion="${escapeHtml(term)}">${escapeHtml(term)}</button>`).join("")}
+      </div>
+    `;
     listEl.appendChild(empty);
     return;
   }
@@ -327,7 +388,7 @@ async function openRecipe(id) {
     dialog.showModal();
   } catch (error) {
     console.error(error);
-    setStatus("Something went wrong loading that recipe.");
+    setStatus(getApiErrorMessage("loading that recipe", error));
   }
 }
 
@@ -472,6 +533,8 @@ themeToggle.addEventListener("click", () => {
   applyTheme(currentTheme === "dark" ? "light" : "dark");
 });
 
+surpriseButton.addEventListener("click", loadRandomMeal);
+
 loadMoreButton.addEventListener("click", () => {
   visibleCount += PAGE_SIZE;
   renderCurrentMeals();
@@ -501,6 +564,12 @@ listEl.addEventListener("click", async (event) => {
   const button = event.target.closest("button");
 
   if (!button) {
+    return;
+  }
+
+  if (button.dataset.suggestion) {
+    searchInput.value = button.dataset.suggestion;
+    await searchMealsByName(button.dataset.suggestion);
     return;
   }
 

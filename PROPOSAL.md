@@ -1,6 +1,6 @@
 # Proposal: Eat Your Way Around the World
 
-**What I'm building:** A recipe explorer where users search recipes by name, browse meals by country or cuisine, filter for vegetarian recipes, view full recipe details, page through larger result sets, and save favorites to come back to later.
+**What I'm building:** A recipe explorer where users search recipes by name, browse meals by country or cuisine, discover surprise recipes, filter for vegetarian recipes, view full recipe details, page through larger result sets, and save favorites to come back to later.
 
 **Which API I'm using:** TheMealDB (https://www.themealdb.com/api.php) — free, no signup required (uses the public test key "1", which TheMealDB explicitly allows for development and educational use).
 
@@ -11,9 +11,9 @@
 **Core features:**
 1. Search recipes by name using TheMealDB's full recipe search endpoint
 2. Browse recipes by country/cuisine using a dropdown of TheMealDB cuisines that currently return recipes
-3. A results grid showing each meal's name, image, cuisine tag, result counts, and visual progress through the current result set
+3. Discover a random recipe with TheMealDB's random endpoint
 4. A detail view for a selected meal with full ingredients, measurements, instructions, and derived recipe facts like ingredient count
-5. Save/unsave favorites to localStorage, with a separate view to revisit saved meals, light/dark mode preference, and animated transitions
+5. Save/unsave favorites to localStorage, with vegetarian filtering, light/dark mode preference, pagination, and animated transitions
 
 **What I don't know yet:**
 - How to chain fetch calls cleanly — going from search or cuisine results to a single meal's full detail involves different endpoint shapes that need to work together

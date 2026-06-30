@@ -11,11 +11,13 @@ The app uses multiple TheMealDB endpoints:
 - `search.php?s=TERM` to search recipes across the database by name
 - `filter.php?a=AREA` to load recipes for the selected cuisine
 - `lookup.php?i=ID` to load full recipe details
+- `random.php` to load a surprise recipe
 
 ## Features
 
 - Search recipes by name across TheMealDB
 - Use quick-search buttons for broader recipe ideas like chicken, pasta, curry, rice, soup, and cake
+- Discover a random recipe with the "Surprise me" button
 - Browse recipes using a cuisine/country dropdown with options that return real meal results
 - Turn vegetarian-only filtering on or off
 - Switch between light and dark mode
@@ -26,7 +28,7 @@ The app uses multiple TheMealDB endpoints:
 - See transformed recipe facts such as category, ingredient count, and video availability
 - Save and remove favorites with `localStorage`
 - View saved favorites in a separate app view
-- Loading, error, and empty states
+- Loading spinner, friendly error messages, and empty states with suggested searches
 - Animated card transitions with reduced-motion support
 - Responsive layout for desktop and mobile screens
 
@@ -42,11 +44,13 @@ Expected format:
 
 ## Screenshot
 
-TODO: Add a screenshot before submission.
+TODO: Add a screenshot before submission. Use a screenshot that shows the app in action, not just the hero.
 
 Suggested path:
 
 `screenshots/home.png`
+
+Recommended screenshot: search for `pasta` or click `Surprise me`, then capture the top of the results page so the screenshot includes the search controls, cuisine dropdown, stats/progress bar, and several recipe cards.
 
 ## How to Run Locally
 
@@ -78,12 +82,13 @@ http://localhost:8000/
 - [x] Includes an extension: visual data display with a progress bar
 - [x] Includes an extension: data transformation with derived recipe facts
 - [x] Includes an extension: animations with reduced-motion support
+- [x] Includes an extension: surprise recipe endpoint
 - [x] Includes `PROPOSAL.md`
 - [x] Includes weekly log notes in `WEEKLY_LOG.md`
-- [ ] Rename/create the public GitHub repo with hyphens if needed, such as `recipe-finder`
-- [ ] Deploy on GitHub Pages
+- [x] Run Lighthouse audit and saved notes in `LIGHTHOUSE.md`
+- [x] Rename/create the public GitHub repo with hyphens if needed, such as `recipe-finder`
+- [x] Deploy on GitHub Pages
 - [ ] Add the live site link above
 - [ ] Add a screenshot above
 - [ ] Link this repo from the `oim3690` README
-- [ ] Run Lighthouse audit
 - [ ] Get feedback from a classmate

@@ -12,6 +12,7 @@ The primary user is someone who likes food, travel, or cooking inspiration and w
 
 - Let users search TheMealDB recipes by name.
 - Let users browse recipes by cuisine/country.
+- Let users discover one random recipe when they do not know what to search.
 - Help users quickly compare recipe results through cards, result counts, and images.
 - Let users open a detail view with ingredients, instructions, and video links.
 - Let users save favorites locally in the browser.
@@ -27,9 +28,10 @@ The primary user is someone who likes food, travel, or cooking inspiration and w
 
 1. As a user, I want to search for a recipe by name so I can quickly find meals related to what I want to cook.
 2. As a user, I want to browse by cuisine/country so I can discover food from different places.
-3. As a user, I want to turn on vegetarian-only filtering so I can narrow results to my dietary preference.
-4. As a user, I want to click a recipe card so I can see ingredients, measurements, instructions, and a video link when available.
-5. As a user, I want to save favorites so I can revisit recipes after refreshing the page.
+3. As a user, I want a surprise recipe button so I can discover something unexpected.
+4. As a user, I want to turn on vegetarian-only filtering so I can narrow results to my dietary preference.
+5. As a user, I want to click a recipe card so I can see ingredients, measurements, instructions, and a video link when available.
+6. As a user, I want to save favorites so I can revisit recipes after refreshing the page.
 
 ## Functional Requirements
 
@@ -38,6 +40,7 @@ The primary user is someone who likes food, travel, or cooking inspiration and w
 - Provide recipe search through `search.php?s=TERM`.
 - Provide cuisine browsing through `filter.php?a=AREA`.
 - Provide full recipe details through `lookup.php?i=ID`.
+- Provide random recipe discovery through `random.php`.
 - Show loading messages during API requests.
 - Show friendly error messages when API requests fail.
 - Show empty states when no results match a search/filter.

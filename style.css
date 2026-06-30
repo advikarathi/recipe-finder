@@ -77,7 +77,7 @@ html[data-theme="dark"] button.secondary {
 
 .eyebrow {
   margin: 0 0 0.45rem;
-  color: #c55a3d;
+  color: #9f3f27;
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -226,21 +226,51 @@ a:focus {
   font-size: 0.9rem;
 }
 
+#surprise-me {
+  border-color: #9f3f27;
+  background: #9f3f27;
+  color: #fff;
+}
+
 html[data-theme="dark"] .quick-searches button {
   border-color: #665342;
   background: #241f19;
   color: #f7c889;
 }
 
+html[data-theme="dark"] #surprise-me {
+  border-color: #e08a62;
+  background: #8c3f29;
+  color: #fff7ee;
+}
+
 #status {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   min-height: 1.6rem;
   margin: 0.5rem 0;
   color: #5d6670;
   font-style: italic;
 }
 
+#status.loading::before {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid #d7c3a6;
+  border-top-color: #1f5f5b;
+  border-radius: 50%;
+  content: "";
+  animation: spin 700ms linear infinite;
+}
+
 html[data-theme="dark"] #status {
   color: #b4c1bd;
+}
+
+html[data-theme="dark"] #status.loading::before {
+  border-color: #52615e;
+  border-top-color: #7fb7a7;
 }
 
 .stats-panel {
@@ -290,7 +320,7 @@ html[data-theme="dark"] #status {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: #c55a3d;
+  background: #9f3f27;
   transition: width 220ms ease;
 }
 
@@ -361,7 +391,7 @@ html[data-theme="dark"] .meal-card {
 
 .card-body p {
   margin: 0 0 0.35rem;
-  color: #c55a3d;
+  color: #9f3f27;
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -438,6 +468,12 @@ html[data-theme="dark"] .detail-facts dt {
   }
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .empty-state {
   grid-column: 1 / -1;
   border: 1px dashed #b8ad9b;
@@ -446,6 +482,26 @@ html[data-theme="dark"] .detail-facts dt {
   background: #fffdf8;
   color: #5d6670;
   text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.empty-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.empty-actions button {
+  border-color: #9f3f27;
+  padding: 0.55rem 0.7rem;
+  background: #9f3f27;
+  color: #fff;
+  font-size: 0.9rem;
 }
 
 html[data-theme="dark"] .empty-state {
