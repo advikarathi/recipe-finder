@@ -44,13 +44,7 @@ Expected format:
 
 ## Screenshot
 
-TODO: Add a screenshot before submission. Use a screenshot that shows the app in action, not just the hero.
-
-Suggested path:
-
-`screenshots/home.png`
-
-Recommended screenshot: search for `pasta` or click `Surprise me`, then capture the top of the results page so the screenshot includes the search controls, cuisine dropdown, stats/progress bar, and several recipe cards.
+![Eat Your Way Around the World](screenshots/home.png)
 
 ## How to Run Locally
 
