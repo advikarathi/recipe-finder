@@ -108,13 +108,20 @@
                 <h2 id="detail-title"></h2>
                 <button id="detail-favorite" type="button"></button>
                 <dl id="detail-facts" class="detail-facts"></dl>
-                <h3>Ingredients</h3>
+                <div class="ingredients-header">
+                    <h3>Ingredients</h3>
+                    <button id="unit-toggle" class="secondary" type="button">Units: Original</button>
+                </div>
                 <ul id="detail-ingredients"></ul>
                 <h3>Instructions</h3>
                 <p id="detail-instructions"></p>
                 <a id="detail-video" class="video-link" href="#" target="_blank" rel="noreferrer">
             Watch recipe video
           </a>
+                <section class="drink-pairing" aria-label="Drink pairing suggestion">
+                    <h3>Drink pairing <span class="source-tag">via TheCocktailDB</span></h3>
+                    <div id="drink-content"></div>
+                </section>
             </div>
         </article>
     </dialog>

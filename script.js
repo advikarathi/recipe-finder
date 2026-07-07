@@ -1,7 +1,40 @@
 const API_BASE = "https://www.themealdb.com/api/json/v1/1";
+const DRINK_API_BASE = "https://www.thecocktaildb.com/api/json/v1/1";
 const FAVORITES_KEY = "worldRecipeFavorites";
 const THEME_KEY = "worldRecipeTheme";
 const VEGETARIAN_KEY = "worldRecipeVegetarianOnly";
+const UNIT_MODE_KEY = "worldRecipeUnitMode";
+const UNIT_MODES = ["original", "metric", "imperial"];
+const UNIT_MODE_LABELS = {
+  original: "Units: Original",
+  metric: "Units: Metric",
+  imperial: "Units: Imperial"
+};
+const UNIT_CONVERSIONS = {
+  g: { toUnit: "oz", factor: 1 / 28.3495, system: "imperial" },
+  gram: { toUnit: "oz", factor: 1 / 28.3495, system: "imperial" },
+  grams: { toUnit: "oz", factor: 1 / 28.3495, system: "imperial" },
+  kg: { toUnit: "lb", factor: 2.20462, system: "imperial" },
+  kilogram: { toUnit: "lb", factor: 2.20462, system: "imperial" },
+  kilograms: { toUnit: "lb", factor: 2.20462, system: "imperial" },
+  ml: { toUnit: "fl oz", factor: 1 / 29.5735, system: "imperial" },
+  millilitre: { toUnit: "fl oz", factor: 1 / 29.5735, system: "imperial" },
+  millilitres: { toUnit: "fl oz", factor: 1 / 29.5735, system: "imperial" },
+  milliliter: { toUnit: "fl oz", factor: 1 / 29.5735, system: "imperial" },
+  milliliters: { toUnit: "fl oz", factor: 1 / 29.5735, system: "imperial" },
+  l: { toUnit: "qt", factor: 1.05669, system: "imperial" },
+  litre: { toUnit: "qt", factor: 1.05669, system: "imperial" },
+  litres: { toUnit: "qt", factor: 1.05669, system: "imperial" },
+  liter: { toUnit: "qt", factor: 1.05669, system: "imperial" },
+  liters: { toUnit: "qt", factor: 1.05669, system: "imperial" },
+  oz: { toUnit: "g", factor: 28.3495, system: "metric" },
+  ounce: { toUnit: "g", factor: 28.3495, system: "metric" },
+  ounces: { toUnit: "g", factor: 28.3495, system: "metric" },
+  lb: { toUnit: "kg", factor: 1 / 2.20462, system: "metric" },
+  lbs: { toUnit: "kg", factor: 1 / 2.20462, system: "metric" },
+  pound: { toUnit: "kg", factor: 1 / 2.20462, system: "metric" },
+  pounds: { toUnit: "kg", factor: 1 / 2.20462, system: "metric" }
+};
 const DEFAULT_AREA = "Italian";
 const PAGE_SIZE = 12;
 const CUISINE_OPTIONS = [
@@ -64,6 +97,8 @@ const detailFacts = document.getElementById("detail-facts");
 const detailIngredients = document.getElementById("detail-ingredients");
 const detailInstructions = document.getElementById("detail-instructions");
 const detailVideo = document.getElementById("detail-video");
+const unitToggleButton = document.getElementById("unit-toggle");
+const drinkContent = document.getElementById("drink-content");
 
 let currentMeals = [];
 let visibleCount = PAGE_SIZE;
@@ -74,6 +109,9 @@ let activeMeal = null;
 let favorites = loadFavorites();
 let vegetarianOnly = localStorage.getItem(VEGETARIAN_KEY) === "true";
 let currentTheme = localStorage.getItem(THEME_KEY) || "light";
+let unitMode = UNIT_MODES.includes(localStorage.getItem(UNIT_MODE_KEY))
+  ? localStorage.getItem(UNIT_MODE_KEY)
+  : "original";
 
 function loadFavorites() {
   const saved = localStorage.getItem(FAVORITES_KEY);
@@ -155,6 +193,76 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function parseQuantity(text) {
+  return text
+    .trim()
+    .split(/\s+/)
+    .reduce((sum, part) => {
+      if (part.includes("/")) {
+        const [numerator, denominator] = part.split("/").map(Number);
+        return denominator ? sum + numerator / denominator : sum;
+      }
+      const value = parseFloat(part);
+      return Number.isNaN(value) ? sum : sum + value;
+    }, 0);
+}
+
+function roundNicely(value) {
+  const rounded = value >= 10 ? Math.round(value) : Math.round(value * 10) / 10;
+  return String(rounded);
+}
+
+function convertMeasure(measure, targetSystem) {
+  if (!measure || targetSystem === "original") {
+    return null;
+  }
+
+  const trimmed = measure.trim();
+  const quantityMatch = trimmed.match(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d*\.\d+|\d+)/);
+
+  if (!quantityMatch) {
+    return null;
+  }
+
+  const quantity = parseQuantity(quantityMatch[0]);
+  const rest = trimmed.slice(quantityMatch[0].length).trim();
+  const unitMatch = rest.match(/^[a-zA-Z.]+/);
+
+  if (!unitMatch) {
+    return null;
+  }
+
+  const unitWord = unitMatch[0].toLowerCase().replace(/\.$/, "");
+  const conversion = UNIT_CONVERSIONS[unitWord];
+
+  if (!conversion || conversion.system !== targetSystem) {
+    return null;
+  }
+
+  const remainder = rest.slice(unitMatch[0].length);
+  const convertedQuantity = roundNicely(quantity * conversion.factor);
+
+  return `${convertedQuantity} ${conversion.toUnit}${remainder}`;
+}
+
+function annotateOvenTemps(text) {
+  if (!text) {
+    return text;
+  }
+
+  return text
+    .replace(/(\d{2,3})\s?[°º]\s?C\b/gi, (match, degrees) => {
+      const celsius = Number(degrees);
+      const fahrenheit = Math.round((celsius * 9) / 5 + 32);
+      return `${celsius}°C (${fahrenheit}°F)`;
+    })
+    .replace(/(\d{2,3})\s?[°º]\s?F\b(?!\))/gi, (match, degrees) => {
+      const fahrenheit = Number(degrees);
+      const celsius = Math.round(((fahrenheit - 32) * 5) / 9);
+      return `${fahrenheit}°F (${celsius}°C)`;
+    });
 }
 
 async function fetchJson(url) {
@@ -386,6 +494,7 @@ async function openRecipe(id) {
     setStatus("");
     renderRecipeDetail(activeMeal);
     dialog.showModal();
+    loadDrinkPairing();
   } catch (error) {
     console.error(error);
     setStatus(getApiErrorMessage("loading that recipe", error));
@@ -394,7 +503,7 @@ async function openRecipe(id) {
 
 function renderRecipeDetail(meal) {
   const isFavorite = favorites.some((favorite) => favorite.idMeal === meal.idMeal);
-  const ingredients = getIngredients(meal);
+  const ingredients = getIngredientList(meal);
 
   detailImage.src = meal.strMealThumb;
   detailImage.alt = meal.strMeal;
@@ -416,10 +525,8 @@ function renderRecipeDetail(meal) {
       <dd>${meal.strYoutube ? "Available" : "Not listed"}</dd>
     </div>
   `;
-  detailIngredients.innerHTML = ingredients
-    .map((ingredient) => `<li>${escapeHtml(ingredient)}</li>`)
-    .join("");
-  detailInstructions.textContent = meal.strInstructions || "No instructions available.";
+  renderIngredientsList(ingredients);
+  detailInstructions.textContent = annotateOvenTemps(meal.strInstructions) || "No instructions available.";
 
   if (meal.strYoutube) {
     detailVideo.href = meal.strYoutube;
@@ -429,7 +536,18 @@ function renderRecipeDetail(meal) {
   }
 }
 
-function getIngredients(meal) {
+function renderIngredientsList(ingredients) {
+  detailIngredients.innerHTML = ingredients
+    .map(({ measure, ingredient }) => {
+      const convertedMeasure = convertMeasure(measure, unitMode);
+      const displayMeasure = convertedMeasure || measure;
+      const line = `${displayMeasure} ${ingredient}`.trim();
+      return `<li>${escapeHtml(line)}</li>`;
+    })
+    .join("");
+}
+
+function getIngredientList(meal) {
   const ingredients = [];
 
   for (let index = 1; index <= 20; index += 1) {
@@ -437,11 +555,46 @@ function getIngredients(meal) {
     const measure = meal[`strMeasure${index}`];
 
     if (ingredient && ingredient.trim()) {
-      ingredients.push(`${measure ? measure.trim() : ""} ${ingredient.trim()}`.trim());
+      ingredients.push({ ingredient: ingredient.trim(), measure: measure ? measure.trim() : "" });
     }
   }
 
   return ingredients;
+}
+
+function setUnitMode(mode) {
+  unitMode = mode;
+  localStorage.setItem(UNIT_MODE_KEY, unitMode);
+  unitToggleButton.textContent = UNIT_MODE_LABELS[unitMode];
+
+  if (activeMeal) {
+    renderIngredientsList(getIngredientList(activeMeal));
+  }
+}
+
+async function loadDrinkPairing() {
+  drinkContent.innerHTML = '<p class="drink-status">Finding a drink pairing...</p>';
+
+  try {
+    const data = await fetchJson(`${DRINK_API_BASE}/random.php`);
+    const drink = data.drinks ? data.drinks[0] : null;
+
+    if (!drink) {
+      throw new Error("No drink returned.");
+    }
+
+    drinkContent.innerHTML = `
+      <img src="${escapeHtml(drink.strDrinkThumb)}" alt="${escapeHtml(drink.strDrink)}" class="drink-thumb" />
+      <div class="drink-info">
+        <p class="drink-name">${escapeHtml(drink.strDrink)}</p>
+        <p class="drink-meta">${escapeHtml(drink.strCategory || "Cocktail")} - ${escapeHtml(drink.strAlcoholic || "")}</p>
+        <button type="button" id="drink-refresh" class="secondary">Try another pairing</button>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Could not load a drink pairing.", error);
+    drinkContent.innerHTML = '<p class="drink-status">Could not load a drink pairing right now.</p>';
+  }
 }
 
 async function toggleFavorite(meal) {
@@ -505,6 +658,7 @@ function getVisibleFavorites() {
 updateFavoritesButton();
 updateVegetarianToggle();
 applyTheme(currentTheme);
+unitToggleButton.textContent = UNIT_MODE_LABELS[unitMode];
 
 areaSelect.addEventListener("change", (event) => {
   loadMealsByArea(event.target.value);
@@ -591,6 +745,17 @@ listEl.addEventListener("click", async (event) => {
 detailFavorite.addEventListener("click", async () => {
   if (activeMeal) {
     await toggleFavorite(activeMeal);
+  }
+});
+
+unitToggleButton.addEventListener("click", () => {
+  const nextIndex = (UNIT_MODES.indexOf(unitMode) + 1) % UNIT_MODES.length;
+  setUnitMode(UNIT_MODES[nextIndex]);
+});
+
+drinkContent.addEventListener("click", (event) => {
+  if (event.target.id === "drink-refresh") {
+    loadDrinkPairing();
   }
 });
 

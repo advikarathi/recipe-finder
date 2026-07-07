@@ -580,6 +580,74 @@ dialog::backdrop {
   font-weight: 800;
 }
 
+.ingredients-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ingredients-header h3 {
+  margin: 1.5rem 0 0.6rem;
+}
+
+#unit-toggle {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.drink-pairing {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e4ddcd;
+}
+
+html[data-theme="dark"] .drink-pairing {
+  border-top-color: #364440;
+}
+
+.source-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c7a76;
+  margin-left: 0.4rem;
+}
+
+#drink-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.drink-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+  animation: card-in 220ms ease both;
+}
+
+.drink-name {
+  margin: 0 0 0.2rem;
+  font-weight: 800;
+}
+
+.drink-meta {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: #6c7a76;
+}
+
+.drink-status {
+  font-style: italic;
+  color: #6c7a76;
+}
+
 .icon-button {
   position: absolute;
   top: 0.75rem;
