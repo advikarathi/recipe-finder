@@ -82,7 +82,7 @@ http://localhost:8000/
 - [x] Run Lighthouse audit and saved notes in `LIGHTHOUSE.md`
 - [x] Rename/create the public GitHub repo with hyphens if needed, such as `recipe-finder`
 - [x] Deploy on GitHub Pages
-- [ ] Add the live site link above
-- [ ] Add a screenshot above
-- [ ] Link this repo from the `oim3690` README
-- [ ] Get feedback from a classmate
+- [x] Add the live site link above
+- [x] Add a screenshot above
+- [x] Link this repo from the `oim3690` README
+- [x] Get feedback from a classmate
